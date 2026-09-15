@@ -1,13 +1,12 @@
 import os, sys
 try:
-    import google.generativeai as genai
+    from google import genai
     from youtube_transcript_api import YouTubeTranscriptApi
     from yt_dlp import YoutubeDL
 except:
     sys.exit(1)
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 channels = ["https://www.youtube.com/@FPLHarry", "https://www.youtube.com/@FPLRaptor", "https://www.youtube.com/@LetsTalkFPL", "https://www.youtube.com/@GianniButtice_", "https://www.youtube.com/@FantasyFootballHub", "https://www.youtube.com/@FPLFocal"]
 
@@ -16,14 +15,17 @@ for url in channels:
     try:
         with YoutubeDL({'quiet': True, 'extract_flat': 'in_playlist', 'playlistend': 5}) as ydl:
             info = ydl.extract_info(url, download=False)
-            for entry in (info.get('entries') or [])[:3]:
+            for entry in (info.get('entries') or [])[:2]:
                 try:
                     t = YouTubeTranscriptApi.get_transcript(entry['id'])
-                    transcripts += " ".join([x['text'] for x in t])[:1000]
+                    transcripts += " ".join([x['text'] for x in t])[:1500]
                 except: pass
     except: pass
 
-response = model.generate_content(f"Analyze these FPL YouTuber transcripts and give CAPTAIN PICK, VICE-CAPTAIN, TOP 3 TRANSFERS, CHIP, and TEAM STRUCTURE:\n{transcripts[:3000]}")
+response = client.models.generate_content(
+    model="gemini-2.0-flash",
+    contents=f"Analyze these FPL YouTuber transcripts. Give CAPTAIN PICK, VICE-CAPTAIN, TOP 3 TRANSFERS, CHIP, TEAM STRUCTURE:\n{transcripts[:2000]}"
+)
 
 import smtplib
 from email.mime.text import MIMEText
