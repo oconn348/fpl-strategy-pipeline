@@ -1,0 +1,20 @@
+name: FPL Strategy Pipeline
+on:
+  schedule:
+    - cron: '14 14 * * 4'
+  workflow_dispatch:
+jobs:
+  fpl-strategy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install google-generativeai youtube-transcript-api yt-dlp
+      - run: python fpl_strategy_pipeline_gemini.py
+        env:
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
