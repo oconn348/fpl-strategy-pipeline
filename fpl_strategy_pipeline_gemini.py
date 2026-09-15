@@ -22,9 +22,9 @@ for url in channels:
                 except: pass
     except: pass
 
-response = client.models.generate_content(
-    model="gemini-2.0-flash-thinking",
-    contents=f"Analyze these FPL YouTuber transcripts. Give CAPTAIN PICK, VICE-CAPTAIN, TOP 3 TRANSFERS, CHIP, TEAM STRUCTURE:\n{transcripts[:2000]}"
+chat = client.chats.create(model="gemini-2.0-flash")
+response = chat.send_message(
+    f"Analyze these FPL YouTuber transcripts. Give CAPTAIN PICK, VICE-CAPTAIN, TOP 3 TRANSFERS, CHIP, TEAM STRUCTURE:\n{transcripts[:2000]}"
 )
 
 import smtplib
