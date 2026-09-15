@@ -23,7 +23,7 @@ for url in channels:
     except: pass
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-2.0-flash-thinking",
     contents=f"Analyze these FPL YouTuber transcripts. Give CAPTAIN PICK, VICE-CAPTAIN, TOP 3 TRANSFERS, CHIP, TEAM STRUCTURE:\n{transcripts[:2000]}"
 )
 
